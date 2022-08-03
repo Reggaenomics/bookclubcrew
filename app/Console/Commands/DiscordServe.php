@@ -30,7 +30,7 @@ class DiscordServe extends Command
     {
         // Create a $discord BOT
         $discord = new Discord([
-            'token' => 'OTkwMjk2NDk3NzQ2NzY3ODcz.GoNDLC.orXOVzmvXAGxiiIma_r3n2ihINei5_1nO4_YyA', // Put your Bot token here from https://discord.com/developers/applications/
+            'token' => config('discord.token')
         ]);
 
 
