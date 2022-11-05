@@ -10,6 +10,7 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "react/async": "^4",
         "team-reflex/discord-php": "^7.1"
     },
     "require-dev": {
@@ -46,7 +47,8 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "pint": "vendor/bin/pint"
     },
     "extra": {
         "laravel": {

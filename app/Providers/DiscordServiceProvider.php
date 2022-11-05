@@ -7,7 +7,6 @@ use Illuminate\Support\ServiceProvider;
 
 class DiscordServiceProvider extends ServiceProvider
 {
-
     /**
      * Register services.
      *
@@ -15,7 +14,7 @@ class DiscordServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('discord', fn() => new Discord());
+        $this->app->singleton('discord', fn () => new Discord());
 
         $this->booted(function () {
             require base_path('discord/commands.php');

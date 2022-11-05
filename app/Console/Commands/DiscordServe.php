@@ -3,9 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Facades\Discord;
-use Illuminate\Console\Command;
-use Discord\Discord as DiscordPHP;
+use Discord\DiscordCommandClient;
 use Discord\Parts\Channel\Message;
+use Illuminate\Console\Command;
+use function React\Async\coroutine;
 
 class DiscordServe extends Command
 {
@@ -26,32 +27,35 @@ class DiscordServe extends Command
     /**
      * Execute the console command.
      *
+     * @throws \Exception
      */
     public function handle()
     {
-
-        // Create a $discord BOT
-        $discord = new DiscordPHP([
-            'token' => config('discord.token')
+        $discord = new DiscordCommandClient([
+            'token' => config('discord.token'),
         ]);
 
+        foreach (Discord::getCommands() as $name => $callback) {
+            $discord->registerCommand($name, function (Message $message, $params) use ($callback) {
+                coroutine(function (Message $message, $params) use ($callback) {
+                    // Ignore messages from any Bots
+                    if ($message->author->bot) {
+                        return;
+                    }
 
-
-        // When the Bot is ready
-        $discord->on('ready', function (DiscordPHP $discord) {
-
-            // Listen for messages
-            $discord->on('message', function (Message $message, DiscordPHP $discord) {
-
-                foreach (Discord::getMessages() as $handler) {
-                    $handler($message, $discord);
-                }
-
+                    $callback($message, $params);
+                }, $message, $params);
             });
+        }
 
+        $discord->on('ready', function (DiscordPHP $discord) {
+            $discord->on('message', function (Message $message, DiscordPHP $discord) {
+                foreach (Discord::getMessages() as $callback) {
+                    $callback($message, $discord);
+                }
+            });
         });
 
-        // Start the Bot (must be at the bottom)
         $discord->run();
     }
 }
