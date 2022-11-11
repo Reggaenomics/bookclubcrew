@@ -17,8 +17,12 @@ class DiscordServiceProvider extends ServiceProvider
         $this->app->singleton('discord', fn () => new Discord());
 
         $this->booted(function () {
-            require base_path('discord/commands.php');
-            require base_path('discord/messages.php');
+            foreach (scandir(base_path('discord')) as $filename) {
+                $path = base_path('discord') . '/' . $filename;
+                if (is_file($path)) {
+                    require $path;
+                }
+            }
         });
     }
 
