@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Facades\Discord;
+use Discord\Discord as DiscordClient;
 use Discord\DiscordCommandClient;
 use Discord\Parts\Channel\Message;
 use Illuminate\Console\Command;
@@ -48,8 +49,8 @@ class DiscordServe extends Command
             });
         }
 
-        $discord->on('ready', function (DiscordPHP $discord) {
-            $discord->on('message', function (Message $message, DiscordPHP $discord) {
+        $discord->on('ready', function (DiscordClient $discord) {
+            $discord->on('message', function (Message $message, DiscordClient $discord) {
                 foreach (Discord::getMessages() as $callback) {
                     $callback($message, $discord);
                 }
