@@ -8,6 +8,8 @@ class Discord
 
     private array $messages = [];
 
+    private array $events = [];
+
     public function command(string $name, \Closure $callback): void
     {
         $this->commands[$name] = $callback;
@@ -18,6 +20,11 @@ class Discord
         $this->messages[] = $callback;
     }
 
+    public function on(string $event, \Closure $callback): void
+    {
+       $this->events[$event] = $callback;
+    }
+
     public function getCommands(): array
     {
         return $this->commands;
@@ -26,5 +33,10 @@ class Discord
     public function getMessages(): array
     {
         return $this->messages;
+    }
+
+    public function getEvents():array
+    {
+        return $this->events;
     }
 }

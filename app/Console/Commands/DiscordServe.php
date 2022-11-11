@@ -55,6 +55,10 @@ class DiscordServe extends Command
                     $callback($message, $discord);
                 }
             });
+
+            foreach (Discord::getEvents() as $event => $callback) {
+                $discord->on($event, $callback);
+            }
         });
 
         $discord->run();
