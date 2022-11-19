@@ -6,6 +6,7 @@ use App\Facades\Discord;
 use Discord\Discord as DiscordClient;
 use Discord\DiscordCommandClient;
 use Discord\Parts\Channel\Message;
+use Discord\WebSockets\Event;
 use Illuminate\Console\Command;
 use function React\Async\coroutine;
 
@@ -50,7 +51,7 @@ class DiscordServe extends Command
         }
 
         $discord->on('ready', function (DiscordClient $discord) {
-            $discord->on('message', function (Message $message, DiscordClient $discord) {
+            $discord->on(Event::MESSAGE_CREATE, function (Message $message, DiscordClient $discord) {
                 foreach (Discord::getMessages() as $callback) {
                     $callback($message, $discord);
                 }

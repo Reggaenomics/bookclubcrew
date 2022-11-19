@@ -4,10 +4,10 @@ namespace App\Discord;
 
 use App\Facades\Discord;
 
-class Message
+class Channel
 {
     public function create(\Closure $handler): void
     {
-        Discord::on(Event::MESSAGE_CREATE, $handler);
+        Discord::on(Event::CHANNEL_CREATE, $handler);
     }
 }

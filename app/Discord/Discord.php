@@ -20,9 +20,9 @@ class Discord
         $this->messages[] = $callback;
     }
 
-    public function on(string $event, \Closure $callback): void
+    public function on(Event $event, \Closure $callback): void
     {
-       $this->events[$event] = $callback;
+        $this->events[$event->name()] = $callback;
     }
 
     public function getCommands(): array
@@ -35,7 +35,7 @@ class Discord
         return $this->messages;
     }
 
-    public function getEvents():array
+    public function getEvents(): array
     {
         return $this->events;
     }

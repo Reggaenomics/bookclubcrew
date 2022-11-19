@@ -1,13 +1,13 @@
 <?php
 
-use App\Facades\Discord;
-use Discord\WebSockets\Event;
+use App\Facades\Channel;
+use App\Facades\Message;
 
-Discord::on(Event::CHANNEL_CREATE, function (\Discord\Parts\Channel\Channel $channel, $discord) {
+Channel::create(function ($channel) {
     $channel->sendMessage('created!');
 });
 
-Discord::message(function ($message) {
+Message::create(function ($message) {
     // Ignore messages from any Bots
     if ($message->author->bot) {
         return;
