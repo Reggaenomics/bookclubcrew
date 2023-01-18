@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Facades\Discord;
+use App\Providers\DiscordServiceProvider;
+use App\Providers\EventServiceProvider;
 use Discord\Discord as DiscordClient;
 use Discord\DiscordCommandClient;
 use Discord\Parts\Channel\Message;
@@ -37,28 +39,27 @@ class DiscordServe extends Command
             'token' => config('discord.token'),
         ]);
 
-        foreach (Discord::getCommands() as $name => $callback) {
-            $discord->registerCommand($name, function (Message $message, $params) use ($callback) {
-                coroutine(function (Message $message, $params) use ($callback) {
+        foreach (Discord::getCommands() as $command) {
+            $instance = new $command();
+            $discord->registerCommand($instance->signature, function (Message $message, $params) use ($instance) {
+                coroutine(function (Message $message, $params) use ($instance) {
                     // Ignore messages from any Bots
                     if ($message->author->bot) {
                         return;
                     }
 
-                    $callback($message, $params);
+                    $instance->handle($message, $params);
                 }, $message, $params);
             });
         }
 
-        $discord->on('ready', function (DiscordClient $discord) {
-            $discord->on(Event::MESSAGE_CREATE, function (Message $message, DiscordClient $discord) {
-                foreach (Discord::getMessages() as $callback) {
-                    $callback($message, $discord);
-                }
-            });
 
-            foreach (Discord::getEvents() as $event => $callback) {
-                $discord->on($event, $callback);
+
+        $discord->on('ready', function (DiscordClient $discord) {
+            foreach (Discord::getEvents() as $event => $listener) {
+                $discord->on($event, function($entity, $discord) use ($listener) {
+                    (new $listener())->handle($entity, $discord);
+                });
             }
         });
 

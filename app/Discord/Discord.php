@@ -6,23 +6,17 @@ class Discord
 {
     private array $commands = [];
 
-    private array $messages = [];
-
     private array $events = [];
 
-    public function command(string $name, \Closure $callback): void
+    public function command($command): void
     {
-        $this->commands[$name] = $callback;
+        $this->commands[] = $command;
     }
 
-    public function message(\Closure $callback): void
-    {
-        $this->messages[] = $callback;
-    }
 
-    public function on(Event $event, \Closure $callback): void
+    public function on($event, $listener): void
     {
-        $this->events[$event->name()] = $callback;
+        $this->events[$event] = $listener;
     }
 
     public function getCommands(): array
@@ -30,10 +24,6 @@ class Discord
         return $this->commands;
     }
 
-    public function getMessages(): array
-    {
-        return $this->messages;
-    }
 
     public function getEvents(): array
     {
